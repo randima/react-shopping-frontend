@@ -1,0 +1,16 @@
+.fullscreen-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #434e5e;
+  }
+
+  .login-container{
+    max-width: 480px;
+    width: 100%;
+    background-color: #edf4ff;
+    padding: 30px;
+    border-radius: 5px
+  }
