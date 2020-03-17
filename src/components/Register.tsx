@@ -1,10 +1,13 @@
 import { Component } from "react";
 import React from "react";
-import { Form, Input, Button, Select } from 'antd';
+import { Form, Input, Button, Select, message } from 'antd';
+import AuthService from "../services/auth.service";
 const { Option } = Select;
 
 const regPass = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])');
 const regMobile = new RegExp('(^1300\d{6}$)|(^1800|1900|1902\d{6}$)|(^[2|3|7|8]{1}[0-9]{8}$)|(^13\d{4}$)|(^04\d{2,3}\d{6}$)');
+
+const authService = new AuthService();
 
 const layout = {
     labelCol: { span: 8 },
@@ -15,7 +18,7 @@ const tailLayout = {
 };
 
 const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
+    <Form.Item name="areacode" noStyle>
         <Select style={{ width: 70 }}>
             <Option value="94">+94</Option>
             <Option value="87">+87</Option>
@@ -23,10 +26,24 @@ const prefixSelector = (
     </Form.Item>
 );
 
-export class Register extends Component {
+interface Props{
+    changeTab: (page: string) => void
+}
 
-    onFinish(values: any) {
+export class Register extends Component<Props> {
+
+     onFinish = async (values: any) => {
         console.log('Success:', values);
+
+        try {
+            await authService.signup(values);
+            this.props.changeTab("1");
+          } catch (error) {
+              console.log(error);
+            const errorMessage = error.response.data.message;
+            message.error(errorMessage);
+          }
+        
     }
 
     onFinishFailed(errorInfo: any) {
@@ -41,12 +58,28 @@ export class Register extends Component {
                 initialValues={{ remember: true }}
                 onFinish={this.onFinish}
                 onFinishFailed={this.onFinishFailed}
-                layout="vertical"
+                layout="horizontal"
             >
                 <Form.Item
-                    label="Username"
-                    name="username"
+                    label="Email"
+                    name="email"
                     rules={[{ required: true, type: 'email' }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label="First Name"
+                    name="firstname"
+                    rules={[{ required: true }]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label="Last Name"
+                    name="lastname"
+                    rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
@@ -66,6 +99,8 @@ export class Register extends Component {
                 >
                     <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
                 </Form.Item>
+
+                
 
                 <Form.Item {...tailLayout}>
                     <Button type="primary" htmlType="submit">

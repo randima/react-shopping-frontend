@@ -1,6 +1,8 @@
 import { Component } from "react";
 import React from "react";
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
+import AuthService from "../services/auth.service";
+import { RouteComponentProps } from "react-router-dom";
 
 
 const layout = {
@@ -16,14 +18,28 @@ const validateMessages = {
     // ...
 };
 
-export class Login extends Component {
+const authService = new AuthService();
+
+export class Login extends Component<RouteComponentProps> {
 
     state = {
         errorMessage: null,
-      };
+    };
 
-    onFinish(values: any) {
+    onFinish = async(values: any) => {
         console.log('Success:', values);
+
+        //this.setState({ errorMessage: null });
+
+        try {
+            await authService.signin(values);
+            this.props.history.push('/');
+        } catch (error) {
+            console.log(error);
+            const errorMessage = error.response.data.message;
+            message.error(errorMessage);
+        }
+
     }
 
     onFinishFailed(errorInfo: any) {
@@ -32,7 +48,7 @@ export class Login extends Component {
 
     render() {
         const { errorMessage } = this.state;
-        
+
         return (
             <div>
                 <Form
@@ -45,8 +61,8 @@ export class Login extends Component {
                     validateMessages={validateMessages}
                 >
                     <Form.Item
-                        label="Username"
-                        name="username"
+                        label="Email"
+                        name="email"
                         rules={[{ required: true, type: 'email' }]}
                     >
                         <Input />

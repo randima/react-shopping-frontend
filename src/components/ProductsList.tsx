@@ -5,6 +5,7 @@ import { ProductItem } from "./ProductItem";
 import { PaginationProduct } from "../models/pagination.product.model";
 import { Pagination } from 'antd';
 import { ProductService } from "../services/products.service";
+import { PaginationConfig } from "antd/lib/pagination";
 
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const productService = new ProductService();
+
+
 
 export class ProductsList extends Component {
     state = {
@@ -26,6 +29,8 @@ export class ProductsList extends Component {
         },
         current: 1
     };
+
+
 
     componentDidMount() {
         this.fetchTasks(1);
@@ -50,20 +55,34 @@ export class ProductsList extends Component {
 
     render() {
         return (
+            <List
+                grid={{
+                    gutter: 16,
+                    xs: 1,
+                    sm: 1,
+                    md: 2,
+                    lg: 3,
+                    xl: 3,
+                    xxl: 4
+                }}
 
-            <div>
+                pagination={{
+                    position: "bottom",
+                    current: this.state.current,
+                    onChange: this.onChange,
+                    total: this.state.data.totalItems,
+                    pageSize: 8,
+                    style: { textAlign: "center" }
+                }}
 
-                <List
-                    grid={{ gutter: 16, column: 4 }}
-                    dataSource={this.state.data.items}
-                    renderItem={item => (
-                        <List.Item>
-                            <ProductItem item={item}></ProductItem>
-                        </List.Item>
-                    )}
-                />
-                <Pagination current={this.state.current} onChange={this.onChange} total={this.state.data.totalItems} pageSize={8} />;
-            </div>
+                dataSource={this.state.data.items}
+                renderItem={item => (
+                    <List.Item>
+                        <ProductItem item={item}></ProductItem>
+                    </List.Item>
+                )}
+            />
+            // {/* <Pagination current={this.state.current} onChange={this.onChange} total={this.state.data.totalItems} pageSize={8} />; */}
         );
     }
 };

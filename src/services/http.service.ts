@@ -34,12 +34,13 @@ export default class BaseHttpService {
 
     _handleHttpError(error: any) {
         const { statusCode } = error.response.data;
+        throw error;
 
-        if (statusCode !== 401) {
-            throw error;
-        } else {
-            return this._handle401();
-        }
+        // if (statusCode !== 401) {
+        //     throw error;
+        // } else {
+        //     return this._handle401();
+        // }
     }
 
     _handle401() {
